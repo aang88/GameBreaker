@@ -3,8 +3,8 @@ package main
 import (
 	service "GameBreakerConsole/service"
 	"bufio"
+	_ "embed"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
@@ -13,6 +13,9 @@ import (
 
 	"golang.org/x/sys/windows"
 )
+
+//go:embed resources/ascii.txt
+var b []byte
 
 func main() {
 
@@ -90,11 +93,6 @@ func amAdmin() bool {
 }
 
 func banner() {
-	b, err := ioutil.ReadFile("resources/ascii.txt")
-	if err != nil {
-		fmt.Println(err)
-		panic(err)
-	}
 	fmt.Println(string(b))
 	spinnerWee(50)
 	cmd := exec.Command("cmd", "/c", "cls")
