@@ -1,5 +1,10 @@
 package service
 
+import (
+	"fmt"
+	"time"
+)
+
 type GameKiller interface {
 	NewGameKiller(int, int, string) *GameKillerImpl
 	KillGames()
@@ -34,7 +39,19 @@ func (g *GameKillerImpl) KillGames() {
 		g.onBreak = true
 		return
 	}
-	g.processManager.KillProcesses(g.processName)
-	g.countDownTimer.countDown(g.cooldownTime)
-	g.onBreak = false
+	done := make(chan bool)
+	g.processManager.refreshProcessList()
+	g.countDownTimer.coolDown(g.cooldownTime, done)
+	for {
+		select {
+		case <-done:
+			fmt.Println("Countdown timer has completed.")
+			g.onBreak = false
+			return
+		default:
+			g.processManager.refreshProcessList()
+			g.processManager.KillProcesses(g.processName)
+			time.Sleep(1 * time.Second)
+		}
+	}
 }

@@ -7,6 +7,7 @@ import (
 
 type CountDownTimer interface {
 	countDown(int)
+	coolDown(setTime int, done chan<- bool)
 }
 
 type CountdownTimerImpl struct {
@@ -26,4 +27,19 @@ func (p *CountdownTimerImpl) countDown(setTime int) {
 	<-timer.C
 
 	fmt.Println("Timer expired! Continue with the rest of the program.")
+}
+
+func (p *CountdownTimerImpl) coolDown(setTime int, done chan<- bool) {
+	fmt.Printf("Starting countdown timer for %d seconds...\n", setTime)
+
+	timer := time.NewTimer(time.Duration(setTime) * time.Second)
+
+	go func() {
+		select {
+		case <-timer.C:
+			fmt.Println("Timer expired! Continue with the rest of the program.")
+			done <- true
+		}
+	}()
+
 }

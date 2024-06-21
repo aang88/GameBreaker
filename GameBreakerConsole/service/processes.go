@@ -11,29 +11,31 @@ type ProcessManager interface {
 	ListProcesses() string
 }
 
-type ProcessManagerImpl struct{}
+type ProcessManagerImpl struct {
+	processList []*process.Process
+}
 
 func NewProcessManager() *ProcessManagerImpl {
-	processManager := &ProcessManagerImpl{}
+	processList, err := process.Processes()
+	if err != nil {
+		fmt.Println("process.Processes() Failed, are you using windows?")
+	}
+	processManager := &ProcessManagerImpl{
+		processList: processList,
+	}
 	return processManager
 }
 
 func (p *ProcessManagerImpl) KillProcesses(name string) error {
-	processList, err := process.Processes()
-	if err != nil {
-		fmt.Println("process.Processes() Failed, are you using windows?")
-		return nil
-	}
 
-	for _, p := range processList {
-		n, err := p.Name()
-		if err != nil {
-			return err
-		}
+	for _, process := range p.processList {
+		n, _ := process.Name()
 
 		if n == name {
 			fmt.Println("Killing App")
-			return p.Kill()
+			err := process.Terminate()
+			fmt.Println(err)
+			return err
 		}
 	}
 
@@ -41,18 +43,13 @@ func (p *ProcessManagerImpl) KillProcesses(name string) error {
 }
 
 func (p *ProcessManagerImpl) ListProcesses() string {
-	processList, err := process.Processes()
-	if err != nil {
-		fmt.Println("process.Processes() Failed, are you using windows?")
-		return ""
-	}
 
 	processListString := ""
 
 	// map ages
-	for x := range processList {
+	for x := range p.processList {
 		var process process.Process
-		process = *processList[x]
+		process = *p.processList[x]
 		name, _ := process.Name()
 		if name != "" {
 			processListString = processListString + name + ", \n"
@@ -61,4 +58,8 @@ func (p *ProcessManagerImpl) ListProcesses() string {
 
 	return processListString
 
+}
+
+func (p *ProcessManagerImpl) refreshProcessList() {
+	p.processList, _ = process.Processes()
 }
