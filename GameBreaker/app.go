@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"GameBreaker\pkg\service"
 )
 
 // App struct
