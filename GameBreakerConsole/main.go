@@ -4,8 +4,9 @@ import (
 	service "GameBreakerConsole/service"
 	"bufio"
 	"fmt"
+	"io/ioutil"
 	"os"
-	"strconv"
+	"os/exec"
 	"strings"
 	"syscall"
 	"time"
@@ -24,28 +25,31 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 
 	var processToKill string
-	var countDownTime int
-	var coolDownTime int
+	var countDownTime string
+	var coolDownTime string
 	var gameKiller *service.GameKillerImpl
 
 	for {
-		if processToKill == "" || countDownTime == 0 || coolDownTime == 0 {
-			fmt.Println("Process List:")
+		//Inital State of da app
+		if processToKill == "" || countDownTime == "" || coolDownTime == "" {
+			banner()
+
+			fmt.Println("Now Printing Process List:")
+			spinnerWee(28)
+
 			fmt.Println(processManager.ListProcesses())
 
 			fmt.Println("Please enter the process you want to kill:")
 			processToKill, _ = reader.ReadString('\n')
 			processToKill = strings.TrimSpace(processToKill)
 
-			fmt.Println("Please enter the time you want to play the game for:")
-			countDownStr, _ := reader.ReadString('\n')
-			countDownStr = strings.TrimSpace(countDownStr)
-			countDownTime, _ = strconv.Atoi(countDownStr)
+			fmt.Println("Please enter the time you want to play the game for, format like (0h0m0s):")
+			countDownTime, _ = reader.ReadString('\n')
+			countDownTime = strings.TrimSpace(countDownTime)
 
-			fmt.Println("Please enter how long you want the playing cooldown for:")
-			coolDownStr, _ := reader.ReadString('\n')
-			coolDownStr = strings.TrimSpace(coolDownStr)
-			coolDownTime, _ = strconv.Atoi(coolDownStr)
+			fmt.Println("Please enter how long you want the playing cooldown for, format like (0h0m0s):")
+			coolDownTime, _ = reader.ReadString('\n')
+			coolDownTime = strings.TrimSpace(coolDownTime)
 
 			gameKiller = service.NewGameKiller(countDownTime, coolDownTime, processToKill)
 			gameKiller.KillGames()
@@ -80,6 +84,28 @@ func amAdmin() bool {
 		fmt.Println("Open as admin to continue")
 		return false
 	}
-	fmt.Println("Opening as admin...")
+	fmt.Println("Opening as admin")
+	spinnerWee(28)
 	return true
+}
+
+func banner() {
+	b, err := ioutil.ReadFile("resources/ascii.txt")
+	if err != nil {
+		fmt.Println(err)
+		panic(err)
+	}
+	fmt.Println(string(b))
+	spinnerWee(50)
+	cmd := exec.Command("cmd", "/c", "cls")
+	cmd.Stdout = os.Stdout
+	cmd.Run()
+}
+
+func spinnerWee(duration int) {
+	spinner := []rune{'|', '/', '-', '\\'}
+	for i := 0; i < duration; i++ {
+		fmt.Printf("\r%c", spinner[i%len(spinner)])
+		time.Sleep(100 * time.Millisecond)
+	}
 }

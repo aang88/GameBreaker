@@ -32,9 +32,8 @@ func (p *ProcessManagerImpl) KillProcesses(name string) error {
 		n, _ := process.Name()
 
 		if n == name {
-			fmt.Println("Killing App")
+			fmt.Println("Killing App >:3")
 			err := process.Terminate()
-			fmt.Println(err)
 			return err
 		}
 	}

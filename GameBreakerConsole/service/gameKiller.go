@@ -12,14 +12,14 @@ type GameKiller interface {
 
 type GameKillerImpl struct {
 	onBreak        bool
-	countdownTime  int
-	cooldownTime   int
+	countdownTime  string
+	cooldownTime   string
 	processName    string
 	countDownTimer CountdownTimerImpl
 	processManager ProcessManagerImpl
 }
 
-func NewGameKiller(countdownTime int, cooldownTime int, processName string) *GameKillerImpl {
+func NewGameKiller(countdownTime string, cooldownTime string, processName string) *GameKillerImpl {
 
 	gameKiller := &GameKillerImpl{
 		onBreak:        false,
