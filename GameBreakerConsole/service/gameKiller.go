@@ -45,7 +45,7 @@ func (g *GameKillerImpl) KillGames() {
 	for {
 		select {
 		case <-done:
-			fmt.Println("Countdown timer has completed.")
+			fmt.Println("Cooldown is up, you may play.")
 			g.onBreak = false
 			return
 		default:
@@ -54,4 +54,5 @@ func (g *GameKillerImpl) KillGames() {
 			time.Sleep(1 * time.Second)
 		}
 	}
+
 }

@@ -30,7 +30,7 @@ func (p *CountdownTimerImpl) countDown(setTime string) {
 	// Block until the timer channel receives a value
 	<-timer.C
 
-	fmt.Println("Timer expired! Continue with the rest of the program.")
+	fmt.Println("Times up! Get to work.")
 }
 
 func (p *CountdownTimerImpl) coolDown(setTime string, done chan<- bool) {
@@ -40,12 +40,12 @@ func (p *CountdownTimerImpl) coolDown(setTime string, done chan<- bool) {
 		fmt.Println("Enter a right time! ex.5h30m40s")
 		return
 	}
-	timer := time.NewTimer(time.Duration(timeDuration) * time.Second)
+	timer := time.NewTimer(timeDuration)
 
 	go func() {
 		select {
 		case <-timer.C:
-			fmt.Println("Timer expired! Continue with the rest of the program.")
+			fmt.Println("Times up! Get to work.")
 			done <- true
 		}
 	}()

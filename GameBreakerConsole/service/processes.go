@@ -9,6 +9,7 @@ import (
 type ProcessManager interface {
 	KillProcesses(string) error
 	ListProcesses() string
+	inProcessList(string) bool
 }
 
 type ProcessManagerImpl struct {
@@ -61,4 +62,16 @@ func (p *ProcessManagerImpl) ListProcesses() string {
 
 func (p *ProcessManagerImpl) refreshProcessList() {
 	p.processList, _ = process.Processes()
+}
+
+func (p *ProcessManagerImpl) inProcessList(name string) bool {
+	for _, process := range p.processList {
+		n, _ := process.Name()
+
+		if n == name {
+			return true
+		}
+	}
+
+	return false
 }

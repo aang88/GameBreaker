@@ -44,15 +44,26 @@ func main() {
 
 			fmt.Println("Please enter the process you want to kill:")
 			processToKill, _ = reader.ReadString('\n')
+
 			processToKill = strings.TrimSpace(processToKill)
 
 			fmt.Println("Please enter the time you want to play the game for, format like (0h0m0s):")
 			countDownTime, _ = reader.ReadString('\n')
 			countDownTime = strings.TrimSpace(countDownTime)
+			_, err := time.ParseDuration(countDownTime)
+			if err != nil {
+				fmt.Println("WRONG FORMAT GO TO THE BEGINNING")
+				continue
+			}
 
 			fmt.Println("Please enter how long you want the playing cooldown for, format like (0h0m0s):")
 			coolDownTime, _ = reader.ReadString('\n')
 			coolDownTime = strings.TrimSpace(coolDownTime)
+			_, err = time.ParseDuration(coolDownTime)
+			if err != nil {
+				fmt.Println("WRONG FORMAT GO TO THE BEGINNING")
+				continue
+			}
 
 			gameKiller = service.NewGameKiller(countDownTime, coolDownTime, processToKill)
 			gameKiller.KillGames()
